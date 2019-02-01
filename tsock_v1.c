@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <errno.h>
+#include <unistd.h>
 
 void construire_message(char * message, char motif, int lg){
 	int i;
@@ -23,7 +24,7 @@ void afficher_message(char * message, int lg){
 	printf("\n");
 }
 
-main (int argc, char **argv)
+int main (int argc, char **argv)
 {
 	int c;
 	extern char *optarg;
@@ -34,7 +35,7 @@ main (int argc, char **argv)
 	int protocole = 0; /* 0 = TCP, 1 = UDP */
 	int nb_port = -1; /* Numéro de port */
 	int nb_port_htons = -1; /* Numéro de port big endian */
-	char * host_name = -1; /* Nom d'hôte */
+	char * host_name; /* Nom d'hôte */
 
 	// Partie INITIALISATION DES PARAMETRES
 
@@ -133,7 +134,7 @@ main (int argc, char **argv)
 		memset((char *)&adr_local, 0, sizeof(adr_local));
 
 		adr_local.sin_family = AF_INET;
-		adr_local.sin_port = nb_port_htons;
+		adr_local.sin_port = nb_port;
 		adr_local.sin_addr.s_addr = INADDR_ANY;
 
 		int lg_adr_local = sizeof(adr_local);
@@ -143,23 +144,20 @@ main (int argc, char **argv)
 			exit(1);
 		}
 
-		char * msg;
+		char * msg = malloc(sizeof(char)*len_message);
 
 		int size_adr_local = sizeof(adr_local);
 
-		//struct sockaddr_in adr_distant;
+		struct sockaddr_in adr_distant;
 
+		memset((char *)&adr_distant, 0, sizeof(adr_distant));
 
-		int sock_name;
-		if((sock_name = getsockname(sock,(struct sockaddr *)&adr_local,&size_adr_local)) == -1){
-			perror("Erreur getsockname :");
-			exit(1);
-		}
+		int lg_adr_distant = sizeof(adr_distant);
 
 		int i = 1;
 		printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",i,nb_port,proc);
 		while(1){
-			if(recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_local,&size_adr_local)!=-1){
+			if(recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_distant,&lg_adr_distant)!=-1){
 				printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
 				i++;
 			}
@@ -177,7 +175,7 @@ main (int argc, char **argv)
 		memset((char *)&adr_distant, 0, sizeof(adr_distant));
 
 		adr_distant.sin_family = AF_INET;
-		adr_distant.sin_port = nb_port_htons;
+		adr_distant.sin_port = nb_port;
 
 
 		if((hp = gethostbyname(host_name)) == NULL){
@@ -203,7 +201,7 @@ main (int argc, char **argv)
 
 	}
 
-
+	return 0;
 
 
 }
