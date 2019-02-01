@@ -33,6 +33,7 @@ main (int argc, char **argv)
 	int len_message = -1; /* Longueur du message */
 	int protocole = 0; /* 0 = TCP, 1 = UDP */
 	int nb_port = -1; /* Numéro de port */
+	int nb_port_htons = -1; /* Numéro de port big endian */
 	char * host_name = -1; /* Nom d'hôte */
 
 	// Partie INITIALISATION DES PARAMETRES
@@ -73,7 +74,6 @@ main (int argc, char **argv)
 		*/
 
 		default:
-			printf("%s",c);
 			printf("usage: tsock [-p|-s] [-u] [-n ##] [-l ##] [host] port\n");
 			break;
 		}
@@ -86,42 +86,19 @@ main (int argc, char **argv)
 	}
 
 	nb_port = atoi(argv[argc-1]);
-	nb_port = htons(nb_port);
+	nb_port_htons = htons(nb_port);
 
 	if (nb_port == -1){
 		printf("usage: tsock [-p|-s] [-u] [-n ##] [-l ##] port\n");
 		exit(1);
-	}else{
-		printf("Port numéro : %d\n",nb_port);
 	}
 
 	if (source == 1){
 		host_name = argv[argc-2];
 	}
 
-	if (protocole == 1)
-		printf("Utilisation de UDP\n");
-	else
-		printf("Utilisation de TCP\n");
-
-
-	if (source == 1)
-		printf("on est dans le source\n");
-	else
-		printf("on est dans le puits\n");
-
-	if (nb_message != -1) {
-		if (source == 1)
-			printf("nb de tampons à envoyer : %d\n", nb_message);
-		else
-			printf("nb de tampons à recevoir : %d\n", nb_message);
-	} else {
-		if (source == 1) {
-			nb_message = 10 ;
-			printf("nb de tampons à envoyer = 10 par défaut\n");
-		} else
-		printf("nb de tampons à envoyer = infini\n");
-
+	if (source == 1) {
+		nb_message = 10 ;
 	}
 
 	len_message = 30;
@@ -156,7 +133,7 @@ main (int argc, char **argv)
 		memset((char *)&adr_local, 0, sizeof(adr_local));
 
 		adr_local.sin_family = AF_INET;
-		adr_local.sin_port = nb_port;
+		adr_local.sin_port = nb_port_htons;
 		adr_local.sin_addr.s_addr = INADDR_ANY;
 
 		int lg_adr_local = sizeof(adr_local);
@@ -170,13 +147,19 @@ main (int argc, char **argv)
 
 		int size_adr_local = sizeof(adr_local);
 
-		int sock_name = getsockname(sock,(struct sockaddr *)&adr_local,&size_adr_local);
+		//struct sockaddr_in adr_distant;
+
+
+		int sock_name;
+		if((sock_name = getsockname(sock,(struct sockaddr *)&adr_local,&size_adr_local)) == -1){
+			perror("Erreur getsockname :");
+			exit(1);
+		}
 
 		int i = 1;
 		printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",i,nb_port,proc);
 		while(1){
-			if(recvfrom(sock_name,msg,len_message,0,&adr_local,sizeof(adr_local))>0){
-
+			if(recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_local,&size_adr_local)!=-1){
 				printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
 				i++;
 			}
@@ -194,7 +177,7 @@ main (int argc, char **argv)
 		memset((char *)&adr_distant, 0, sizeof(adr_distant));
 
 		adr_distant.sin_family = AF_INET;
-		adr_distant.sin_port = nb_port;
+		adr_distant.sin_port = nb_port_htons;
 
 
 		if((hp = gethostbyname(host_name)) == NULL){
@@ -208,12 +191,12 @@ main (int argc, char **argv)
 
 		int nb_char_sent;
 		int i;
-		printf("SOURCE : lg_mesg-lu=%d, port=%d, nb_reception=infini, nb_envois=%d, TP=%s, dest=%s\n",i,nb_port,nb_message,proc,host_name);
+		printf("SOURCE : port=%d, nb_reception=infini, nb_envois=%d, TP=%s, dest=%s\n",nb_port,nb_message,proc,host_name);
 
 		for(i = 0 ; i < nb_message ; i++){
 			char * msg = malloc(sizeof(char)*len_message);
 			construire_message(msg,'a',len_message);
-			int ret = sendto(sock,msg,len_message,0,&adr_distant,sizeof(adr_distant));
+			int ret = sendto(sock,msg,len_message,0,(struct sockaddr*)&adr_distant,sizeof(adr_distant));
 			printf("SOURCE : Envoi n°%d (%d) [%s]\n",i,len_message,msg);
 		}
 		printf("SOURCE : Fin\n");
