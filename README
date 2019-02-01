@@ -1,0 +1,12 @@
+DELIOT Maxence
+DESPORTES Kilian
+
+GRP C
+
+L'envoi fonctionne
+Le puit ne marche pas
+
+Nous en somme à la version 1
+
+commande : gcc tsock_v1.c -o tsock 
+
