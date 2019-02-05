@@ -124,6 +124,7 @@ int main (int argc, char **argv)
 
 	if(source == 0){
 		//reception
+
 		if(protocole == 1){
 			struct sockaddr_in adr_local;
 
@@ -152,15 +153,15 @@ int main (int argc, char **argv)
 				}else{
 					switch(fork())
 					{
-						case -1 :
+						case -1:
 							printf("erreur fork\n");
-							exit(1);
-						case 0 :
+						case 0:
 							if(read(sock_bis,msg,len_message)!=-1){
 								afficher_message(msg,len_message);
 								//printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
 								i++;
 							}
+							shutdown(sock_bis,0);
 							exit(0);
 						default:
 							close(sock_bis);
