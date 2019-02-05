@@ -48,12 +48,14 @@ int main (int argc, char **argv)
 			host_name = argv[argc-2];
 			break;
 		case 'l':
+			printf("%s\n",optarg);
 			len_message = atoi(optarg);
 			break;
 		case 'u':
 			protocole = 1;
 			break;
 		case 'n':
+			printf("%s\n",optarg);
 			nb_message = atoi(optarg);
 			break;
 		default:
@@ -65,6 +67,8 @@ int main (int argc, char **argv)
 		printf("usage: tsock [-p|-s] [-u] [-n ##] [-l ##] [host] port\n");
 		exit(1) ;
 	}
+
+	printf("DONE\n");
 	nb_port = atoi(argv[argc-1]);
 	nb_port_htons = htons(nb_port);
 	if (nb_port == -1){
