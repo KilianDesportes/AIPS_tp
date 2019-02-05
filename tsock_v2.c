@@ -27,7 +27,7 @@ int main (int argc, char **argv)
 	int nb_port = -1; /* Numéro de port */
 	int nb_port_htons = -1; /* Numéro de port big endian */
 	char * host_name; /* Nom d'hôte */
-	int soc; /* Socket */
+	int sock; /* Socket */
 	char * proc; /* Nom du protocole */
 	// Partie INITIALISATION DES PARAMETRES
 	while ((c = getopt(argc, argv, "psu")) != -1) {
