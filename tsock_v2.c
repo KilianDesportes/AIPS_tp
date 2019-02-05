@@ -30,7 +30,7 @@ int main (int argc, char **argv)
 	int sock; /* Socket */
 	char * proc; /* Nom du protocole */
 	// Partie INITIALISATION DES PARAMETRES
-	while ((c = getopt(argc, argv, "psuln") != -1) {
+	while ((c = getopt(argc, argv, "psuln")) != -1) {
 		switch (c) {
 		case 'p':
 			if (source == 1) {
