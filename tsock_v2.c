@@ -143,7 +143,7 @@ int main (int argc, char **argv)
 		memcpy((char*)&(adr_distant.sin_addr.s_addr),
 				hp->h_addr,
 				hp->h_length);
-
+		int lg_adr_distant = sizeof(adr_distant);
 		int nb_char_sent, i;
 		if(protocole == 1){
 			//ENVOI UDP
