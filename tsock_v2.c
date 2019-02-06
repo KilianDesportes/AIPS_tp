@@ -107,16 +107,17 @@ int main (int argc, char **argv)
 			int sock_bis;
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			while(1){
-				printf("while");
+				printf("-- WHILE -- \n");
 				if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
 					perror("Echec accept");
 				}else{
-					if(read(sock_bis,msg,len_message)!=-1){
+					printf("--  ELSE -- \n")
+					if(recv(sock_bis,msg,len_message,0) >= 0 ){
 						printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
-						printf("__--__--__\n");
+						printf("-- ___ -- \n");
 						i++;
 					}
-					printf("fin if");
+					printf("-- FIN IF -- \n");
 				}
 			}
 		}else{
