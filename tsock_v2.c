@@ -99,20 +99,24 @@ int main (int argc, char **argv)
 				perror("Echec du bind\n");
 				exit(1);
 		}
-		char * msg = malloc(sizeof(char)*len_message);
+		char msg[len_message];
 		int i = 1;
 		// RECEPTION TCP
 		if(protocole == 0){
+			listen(sock,10);
 			int sock_bis;
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			while(1){
+				printf("while");
 				if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
-					//ECHEC ACCEPT
+					perror("Echec accept");
 				}else{
 					if(read(sock_bis,msg,len_message)!=-1){
-					printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
-					i++;
-				}
+						printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
+						printf("__--__--__\n");
+						i++;
+					}
+					printf("fin if");
 				}
 			}
 		}else{
