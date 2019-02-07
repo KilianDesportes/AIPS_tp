@@ -24,13 +24,14 @@ int main (int argc, char **argv)
 	int source = -1 ; /* 0=puits, 1=source */
 	int len_message = 30; /* Longueur du message, defaut : 30 */
 	int protocole = 0; /* 0 = TCP, 1 = UDP */
+	int nb_msg_modif = 0; /* 1 = modification, 0 = pas de modification */
 	int nb_port = -1; /* Numéro de port */
 	int nb_port_htons = -1; /* Numéro de port big endian */
 	char * host_name; /* Nom d'hôte */
 	int sock; /* Socket */
 	char * proc; /* Nom du protocole */
 	// Partie INITIALISATION DES PARAMETRES
-	while ((c = getopt(argc, argv, "psuln")) != -1) {
+	while ((c = getopt(argc, argv, "psul:n:")) != -1) {
 		switch (c) {
 		case 'p':
 			if (source == 1) {
@@ -55,6 +56,7 @@ int main (int argc, char **argv)
 			break;
 		case 'n':
 			nb_message = atoi(optarg);
+			nb_msg_modif = 1;
 			break;
 		default:
 			printf("usage: tsock [-p|-s] [-u] [-n ##] [-l ##] [host] port\n");
@@ -103,22 +105,45 @@ int main (int argc, char **argv)
 		int i = 1;
 		// RECEPTION TCP
 		if(protocole == 0){
+			int nb_lu;
 			listen(sock,10);
 			int sock_bis;
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
-			while(1){
-				printf("-- WHILE -- \n");
-				if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
+			if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
 					perror("Echec accept");
-				}else{
-					printf("--  ELSE -- \n")
-					if(recv(sock_bis,msg,len_message,0) >= 0 ){
-						printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
-						printf("-- ___ -- \n");
-						i++;
+			}
+			if(nb_msg_modif == 1){
+				int j;
+				for(j=0;j<nb_message;j++){
+					if(nb_lu=read(sock_bis,msg,len_message)){
+						printf("PUITS : Reception n°%d (%d) [%s]\n",(j+1),nb_lu,msg);
 					}
-					printf("-- FIN IF -- \n");
 				}
+			}else{
+				while(1){
+					if(nb_lu=read(sock_bis,msg,len_message)){
+						printf("PUITS : Reception n°%d (%d) [%s]\n",i,nb_lu,msg);
+						i++;
+					}else{
+						if(close(sock_bis) == -1){
+							perror("Echec destruction du socket source");
+						}else{
+							printf("-- Destruction socket --\n");
+						}
+						if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
+							perror("Echec accept");
+						}else{
+							printf("-- Nouvelle connexion --\n.");
+							i=0;
+						}
+					}
+				}
+			}
+			if(close(sock_bis) == -1){
+				perror("destruction du socket source");
+			}
+			if(shutdown(sock,0) == -1){
+				perror("Echec shutdown");
 			}
 		}else{
 			// RECEPTION UDP
@@ -152,12 +177,12 @@ int main (int argc, char **argv)
 		int nb_char_sent, i;
 		if(protocole == 1){
 			//ENVOI UDP
+			char * msg = malloc(sizeof(char)*len_message);
 			printf("SOURCE : port=%d, nb_reception=infini, nb_envois=%d, TP=%s, dest=%s\n",nb_port,nb_message,proc,host_name);
 			for(i = 0 ; i < nb_message ; i++){
-				char * msg = malloc(sizeof(char)*len_message);
 				construire_message(msg,'a',len_message);
 				int ret = sendto(sock,msg,len_message,0,(struct sockaddr*)&adr_distant,sizeof(adr_distant));
-				printf("SOURCE : Envoi n°%d (%d) [%s]\n",i,len_message,msg);
+				printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 			}
 			printf("SOURCE : Fin\n");
 		}else{
@@ -166,12 +191,12 @@ int main (int argc, char **argv)
 				perror("Erreur connect");
 				exit(1);
 			}else{
+				char * msg = malloc(sizeof(char)*len_message);
 				printf("SOURCE : port=%d, nb_reception=infini, nb_envois=%d, TP=%s, dest=%s\n",nb_port,nb_message,proc,host_name);
 				for(i = 0 ; i < nb_message ; i++){
-					char * msg = malloc(sizeof(char)*len_message);
 					construire_message(msg,'a',len_message);
 					int ret = write(sock,msg,len_message);
-					printf("SOURCE : Envoi n°%d (%d) [%s]\n",i,len_message,msg);
+					printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 				}
 				printf("SOURCE : Fin\n");
 			}
