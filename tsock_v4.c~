@@ -136,7 +136,7 @@ main (int argc, char **argv)
   // SERVEUR
   if (protocole == 0)
     {
-      //PROTOCOLE TCP
+    	//PROTOCOLE TCP
       if (source == 0)
         {
           struct sockaddr_in adr_local;
@@ -345,11 +345,9 @@ main (int argc, char **argv)
               printf ("SOURCE : Fin\n");
             }
         }
-    }
-  else
-    {
-      //PROTOCOLE UDP
-      if (source == 0)
+    }else{
+    	//PROTOCOLE UDP
+    	if (source == 0)
         {
           struct sockaddr_in adr_local;
           memset ((char *) &adr_local, 0, sizeof (adr_local));

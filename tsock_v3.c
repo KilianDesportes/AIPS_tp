@@ -17,11 +17,11 @@ void construire_message(char * message, char motif, int lg){
 
 void afficher_message(char *message, int lg) {
 	int i;
-	printf("message construit : ");
+	printf("[");
 	for (i=0;i<lg;i++){
 		printf("%c", message[i]); 
 	}
-	printf("\n");
+	printf("]\n");
 }
 
 int main (int argc, char **argv)
@@ -120,6 +120,7 @@ int main (int argc, char **argv)
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
 					perror("Echec accept");
+					exit(1);
 			}
 			if(nb_msg_modif == 1){
 				int j;
