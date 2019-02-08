@@ -17,11 +17,11 @@ void construire_message(char * message, char motif, int lg){
 
 void afficher_message(char *message, int lg) {
 	int i;
-	printf("message construit : ");
+	printf("[");
 	for (i=0;i<lg;i++){
 		printf("%c", message[i]); 
 	}
-	printf("\n");
+	printf("]\n");
 }
 
 int main (int argc, char **argv)
@@ -116,8 +116,8 @@ int main (int argc, char **argv)
 
 			while(1){
 				if(nb_lu=read(sock_bis,msg,len_message)){
+					printf("PUITS : Reception n°%d (%d) ",i,nb_lu);
 					afficher_message(msg,nb_lu);
-					//printf("PUITS : Reception n°%d (%d) [%s]\n",i,nb_lu,msg);
 					i++;
 				}else{
 					if(close(sock_bis) == -1){
@@ -148,8 +148,8 @@ int main (int argc, char **argv)
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			while(1){
 				if((nb_lu = recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_distant,&lg_adr_distant))!=-1){
+					printf("PUITS : Reception n°%d (%d) ",i,nb_lu);
 					afficher_message(msg,nb_lu);
-					//printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
 					i++;
 				}
 			}
@@ -177,8 +177,8 @@ int main (int argc, char **argv)
 			for(i = 0 ; i < nb_message ; i++){
 				construire_message(msg,'a',len_message);
 				int ret = sendto(sock,msg,len_message,0,(struct sockaddr*)&adr_distant,sizeof(adr_distant));
+				printf("SOURCE : Envoi n°%d (%d) ",(i+1),len_message);
 				afficher_message(msg,len_message);
-				//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 			}
 			printf("SOURCE : Fin\n");
 		}else{
@@ -192,8 +192,8 @@ int main (int argc, char **argv)
 				for(i = 0 ; i < nb_message ; i++){
 					construire_message(msg,'a',len_message);
 					int ret = write(sock,msg,len_message);
+					printf("SOURCE : Envoi n°%d (%d) ",(i+1),len_message);
 					afficher_message(msg,len_message);
-					//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 				}
 				printf("SOURCE : Fin\n");
 			}

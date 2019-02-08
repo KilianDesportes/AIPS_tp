@@ -125,14 +125,15 @@ int main (int argc, char **argv)
 				int j;
 				for(j=0;j<nb_message;j++){
 					if(nb_lu=read(sock_bis,msg,len_message)){
-						printf("PUITS : Reception n°%d (%d) [%s]\n",(j+1),nb_lu,msg);
+						printf("PUITS : Reception n°%d (%d) ",i,nb_lu);
+						afficher_message(msg,nb_lu);
 					}
 				}
 			}else{
 				while(1){
 					if(nb_lu=read(sock_bis,msg,len_message)){
+						printf("PUITS : Reception n°%d (%d) ",i,nb_lu);
 						afficher_message(msg,nb_lu);
-						//printf("PUITS : Reception n°%d (%d) [%s]\n",i,nb_lu,msg);
 						i++;
 					}else{
 						if(close(sock_bis) == -1){
@@ -193,8 +194,8 @@ int main (int argc, char **argv)
 			for(i = 0 ; i < nb_message ; i++){
 				construire_message(msg,'a',len_message);
 				int ret = sendto(sock,msg,len_message,0,(struct sockaddr*)&adr_distant,sizeof(adr_distant));
+				printf("SOURCE : Envoi n°%d (%d) ",(i+1),len_message);
 				afficher_message(msg,len_message);
-				//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 			}
 			printf("SOURCE : Fin\n");
 		}else{
@@ -208,8 +209,8 @@ int main (int argc, char **argv)
 				for(i = 0 ; i < nb_message ; i++){
 					construire_message(msg,'a',len_message);
 					int ret = write(sock,msg,len_message);
+					printf("SOURCE : Envoi n°%d (%d) ",(i+1),len_message);
 					afficher_message(msg,len_message);
-					//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 				}
 				printf("SOURCE : Fin\n");
 			}
