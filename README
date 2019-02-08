@@ -3,10 +3,7 @@ DESPORTES Kilian
 
 GRP C
 
-L'envoi fonctionne
-Le puit ne marche pas
+Tout semble marcher dans la v4.
 
-Nous en somme à la version 1
-
-commande : gcc tsock_v1.c -o tsock 
+commande : gcc tsock_v4.c -o tsock 
 
