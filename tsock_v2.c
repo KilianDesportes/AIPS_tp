@@ -15,6 +15,15 @@ void construire_message(char * message, char motif, int lg){
 	}
 }
 
+void afficher_message(char *message, int lg) {
+	int i;
+	printf("message construit : ");
+	for (i=0;i<lg;i++){
+		printf("%c", message[i]); 
+	}
+	printf("\n");
+}
+
 int main (int argc, char **argv)
 {
 	int c;
@@ -24,14 +33,13 @@ int main (int argc, char **argv)
 	int source = -1 ; /* 0=puits, 1=source */
 	int len_message = 30; /* Longueur du message, defaut : 30 */
 	int protocole = 0; /* 0 = TCP, 1 = UDP */
-	int nb_msg_modif = 0; /* 1 = modification, 0 = pas de modification */
 	int nb_port = -1; /* Numéro de port */
 	int nb_port_htons = -1; /* Numéro de port big endian */
 	char * host_name; /* Nom d'hôte */
 	int sock; /* Socket */
 	char * proc; /* Nom du protocole */
 	// Partie INITIALISATION DES PARAMETRES
-	while ((c = getopt(argc, argv, "psul:n:")) != -1) {
+	while ((c = getopt(argc, argv, "psu")) != -1) {
 		switch (c) {
 		case 'p':
 			if (source == 1) {
@@ -48,15 +56,8 @@ int main (int argc, char **argv)
 			source = 1;
 			host_name = argv[argc-2];
 			break;
-		case 'l':
-			len_message = atoi(optarg);
-			break;
 		case 'u':
 			protocole = 1;
-			break;
-		case 'n':
-			nb_message = atoi(optarg);
-			nb_msg_modif = 1;
 			break;
 		default:
 			printf("usage: tsock [-p|-s] [-u] [-n ##] [-l ##] [host] port\n");
@@ -103,39 +104,32 @@ int main (int argc, char **argv)
 		}
 		char msg[len_message];
 		int i = 1;
+		int nb_lu;
 		// RECEPTION TCP
 		if(protocole == 0){
-			int nb_lu;
 			listen(sock,10);
 			int sock_bis;
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
 					perror("Echec accept");
 			}
-			if(nb_msg_modif == 1){
-				int j;
-				for(j=0;j<nb_message;j++){
-					if(nb_lu=read(sock_bis,msg,len_message)){
-						printf("PUITS : Reception n°%d (%d) [%s]\n",(j+1),nb_lu,msg);
-					}
-				}
-			}else{
-				while(1){
-					if(nb_lu=read(sock_bis,msg,len_message)){
-						printf("PUITS : Reception n°%d (%d) [%s]\n",i,nb_lu,msg);
-						i++;
+
+			while(1){
+				if(nb_lu=read(sock_bis,msg,len_message)){
+					afficher_message(msg,nb_lu);
+					//printf("PUITS : Reception n°%d (%d) [%s]\n",i,nb_lu,msg);
+					i++;
+				}else{
+					if(close(sock_bis) == -1){
+						perror("Echec destruction du socket source");
 					}else{
-						if(close(sock_bis) == -1){
-							perror("Echec destruction du socket source");
-						}else{
-							printf("-- Destruction socket --\n");
-						}
-						if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
-							perror("Echec accept");
-						}else{
-							printf("-- Nouvelle connexion --\n.");
-							i=0;
-						}
+						printf("-- Destruction socket --\n");
+					}
+					if((sock_bis=accept(sock,(struct sockaddr *)&adr_local,&lg_adr_local)) == -1){
+						perror("Echec accept");
+					}else{
+						printf("-- Nouvelle connexion --\n.");
+						i=0;
 					}
 				}
 			}
@@ -153,8 +147,9 @@ int main (int argc, char **argv)
 			int lg_adr_distant = sizeof(adr_distant);
 			printf("PUITS : lg_mesg-lu=%d, port=%d, nb_reception=infini, TP=%s\n",len_message,nb_port,proc);
 			while(1){
-				if(recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_distant,&lg_adr_distant)!=-1){
-					printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
+				if((nb_lu = recvfrom(sock,msg,len_message,0,(struct sockaddr *)&adr_distant,&lg_adr_distant))!=-1){
+					afficher_message(msg,nb_lu);
+					//printf("PUITS : Reception n°%d (%d) [%s]\n",i,len_message,msg);
 					i++;
 				}
 			}
@@ -182,7 +177,8 @@ int main (int argc, char **argv)
 			for(i = 0 ; i < nb_message ; i++){
 				construire_message(msg,'a',len_message);
 				int ret = sendto(sock,msg,len_message,0,(struct sockaddr*)&adr_distant,sizeof(adr_distant));
-				printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
+				afficher_message(msg,len_message);
+				//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 			}
 			printf("SOURCE : Fin\n");
 		}else{
@@ -196,7 +192,8 @@ int main (int argc, char **argv)
 				for(i = 0 ; i < nb_message ; i++){
 					construire_message(msg,'a',len_message);
 					int ret = write(sock,msg,len_message);
-					printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
+					afficher_message(msg,len_message);
+					//printf("SOURCE : Envoi n°%d (%d) [%s]\n",(i+1),len_message,msg);
 				}
 				printf("SOURCE : Fin\n");
 			}
