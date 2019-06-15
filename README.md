@@ -1,5 +1,4 @@
-Projet 'Applications internet et programmation socket', 3e année INSA Toulouse, Pré-orientation MIC.
-
+# Projet 'Applications internet et programmation socket' &mdash; INSA Toulouse
 
 DELIOT Maxence
 
