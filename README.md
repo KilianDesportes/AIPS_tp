@@ -1,15 +1,21 @@
 Projet 'Applications internet et programmation socket', 3e année INSA Toulouse, Pré-orientation MIC.
 
+
 DELIOT Maxence
+
 DESPORTES Kilian
+
 
 3 MIC
 Groupe C
 2018-2019.
 
+
 Programme de communication entre deux instances (source & puit), en TCP ou en UDP.
 
+
 Nous avons implémenté l'ensemble des fonctionnalités demandés, toutes disponibles dans la version 4.
+
 
 Génération de l'exécutable : `$ gcc tsock_v4.c -o tsock`
 
