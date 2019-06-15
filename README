@@ -1,9 +1,13 @@
+Projet 'Applications internet et programmation socket'
+
 DELIOT Maxence
 DESPORTES Kilian
 
-GRP C
+3 MIC
+Groupe C
+2018-2019.
 
-Tout semble marcher dans la v4.
+Nous avons implémentés l'ensemble des fonctionnalités demandés, toutes disponibles dans la version 4.
 
-commande : gcc tsock_v4.c -o tsock 
+Commande de génération de l'exécutable : `gcc tsock_v4.c -o tsock`
 
