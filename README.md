@@ -16,6 +16,7 @@ Génération de l'exécutable : `$ gcc tsock_v4.c -o tsock`
 Utilisation :
 * Mode puit : `tsock -p [-options] port`
 * Mode source : `tsock -s [-options] host port`
+
 Options :
 * Utilisation UDP :  `-u`, par defaut, TCP est utilisé
 * Longueur (en octets) de messages à émettre (emission) : `-l ##`, par défaut, la longueur est de 30.
