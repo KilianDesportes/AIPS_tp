@@ -9,5 +9,7 @@ Groupe C
 
 Nous avons implémentés l'ensemble des fonctionnalités demandés, toutes disponibles dans la version 4.
 
-Commande de génération de l'exécutable : `gcc tsock_v4.c -o tsock`
-
+Commande de génération de l'exécutable :
+```
+$ gcc tsock_v4.c -o tsock
+```
