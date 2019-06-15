@@ -1,4 +1,4 @@
-# Projet 'Applications internet et programmation socket' &mdash; INSA Toulouse
+## Projet 'Applications internet et programmation socket' &mdash; INSA Toulouse
 
 DELIOT Maxence
 
