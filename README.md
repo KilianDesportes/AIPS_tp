@@ -27,3 +27,6 @@ Options :
 * Utilisation UDP :  `-u`, par defaut, TCP est utilisé
 * Longueur (en octets) de messages à émettre (emission) : `-l ##`, par défaut, la longueur est de 30.
 * Nombre (en octets) de messages à émettre (emission) : `-n ##`, par défaut, 10 messages sont envoyés.
+
+
+Note obtenue : 19.25/20
