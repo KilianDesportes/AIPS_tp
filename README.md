@@ -6,26 +6,20 @@ DESPORTES Kilian
 
 
 3 MIC
-Groupe C
+Group C
 2018-2019.
 
+Program for communication between two instances (source & sink), in TCP or UDP.
 
-Programme de communication entre deux instances (source & puit), en TCP ou en UDP.
+We have implemented all the requested functionalities, all available in version 4.
 
+Generating the executable: `$ gcc tsock_v4.c -o tsock`
 
-Nous avons implémenté l'ensemble des fonctionnalités demandés, toutes disponibles dans la version 4.
-
-
-Génération de l'exécutable : `$ gcc tsock_v4.c -o tsock`
-
-Utilisation :
-* Mode puit : `tsock -p [-options] port`
-* Mode source : `tsock -s [-options] host port`
+Use :
+* Well mode: `tsock -p [-options] port`
+* Source mode: `tsock -s [-options] host port`.
 
 Options :
-* Utilisation UDP :  `-u`, par defaut, TCP est utilisé
-* Longueur (en octets) de messages à émettre (emission) : `-l ##`, par défaut, la longueur est de 30.
-* Nombre (en octets) de messages à émettre (emission) : `-n ##`, par défaut, 10 messages sont envoyés.
-
-
-Note obtenue : 19.25/20
+* UDP usage: `-u`, by default, TCP is used
+* Length (in bytes) of messages to be sent (transmission): `-l ##`, by default, the length is 30.
+* Number (in bytes) of messages to be sent: `-n ##`, by default, 10 messages are sent.
